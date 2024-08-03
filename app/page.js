@@ -18,6 +18,7 @@ export default function Home() {
   const [inventory, setInventory] = useState([]);
   const [open, setOpen] = useState(false);
   const [itemName, setItemName] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const updateInventory = async () => {
     const inventoryQuery = query(collection(firestore, "inventory"));
@@ -63,6 +64,10 @@ export default function Home() {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const filteredInventory = inventory.filter(({ name }) =>
+    name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <Box
@@ -110,6 +115,13 @@ export default function Home() {
           </Stack>
         </Box>
       </Modal>
+      <TextField
+        variant="outlined"
+        placeholder="Search items..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        sx={{ width: "50%", marginBottom: 2 }}
+      />
       <Button
         variant="contained"
         onClick={() => {
@@ -133,7 +145,7 @@ export default function Home() {
         </Box>
 
         <Stack width="800px" height="300px" spacing={2} overflow="auto">
-          {inventory.map(({ name, quantity }) => (
+          {filteredInventory.map(({ name, quantity }) => (
             <Box
               key={name}
               width="100%"
